@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Custom VMT Monitor</title>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: white;
+    }
+
+    #monitor {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /*
+       Our replacement title.
+       Adjust height/top if necessary.
+    */
+    #customTitle {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+
+        height: 90px;
+
+        background: white;
+        z-index: 10;
+
+        display: flex;
+        align-items: center;
+
+        padding-left: 30px;
+
+        box-sizing: border-box;
+
+        font-family: Arial, sans-serif;
+        font-size: 42px;
+        font-weight: bold;
+        color: #000;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="customTitle">
+    DEIN EIGENER TITEL
+</div>
+
+<iframe
+    id="monitor"
+    src="https://vmt.hafas.cloud/mct/views/monitor/index.html?cfgFile=Bb01FAozvVHK2oWN7hjA_1612186328552&station=155033&productOrder=%5B%5D&monitorHeadline="
+    allowfullscreen>
+</iframe>
+
+<script>
+    const monitor = document.getElementById("monitor");
+
+    function reloadMonitor() {
+        const url =
+            "https://vmt.hafas.cloud/mct/views/monitor/index.html" +
+            "?cfgFile=Bb01FAozvVHK2oWN7hjA_1612186328552" +
+            "&station=155033" +
+            "&productOrder=%5B%5D" +
+            "&monitorHeadline=";
+
+        monitor.src = url + "&refresh=" + Date.now();
+    }
+
+    // Refresh every 60 seconds
+    setInterval(reloadMonitor, 60000);
+</script>
+
+</body>
+</html>
