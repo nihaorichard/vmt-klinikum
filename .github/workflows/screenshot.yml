@@ -1,0 +1,49 @@
+name: Update stationboard screenshot
+
+on:
+  schedule:
+    # GitHub's minimum schedulable interval is 5 minutes. In practice,
+    # under load GitHub can delay scheduled runs by a few minutes — this
+    # guarantees "at least every ~5-10 min", not a hard real-time clock.
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vmt-klinikum-screenshot
+  cancel-in-progress: true
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # No cache: "npm" here — that requires a committed lockfile
+          # (package-lock.json / npm-shrinkwrap.json / yarn.lock) to key
+          # the cache off. Playwright's own install step below is the
+          # slow part anyway, so npm caching buys little here.
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture screenshot
+        run: npm run screenshot
+
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update stationboard screenshot [skip ci]"
+          file_pattern: latest.png
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
